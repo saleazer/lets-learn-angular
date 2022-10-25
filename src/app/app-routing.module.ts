@@ -1,9 +1,13 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { AngularResourcesComponent } from './angular-resources/angular-resources.component';
+import { AppHomeComponent } from './app-home/app-home.component';
+import { AngularResourcesComponent}  from './angular-resources/angular-resources.component'
 
 const routes: Routes = [
-  { path: '**', component: AngularResourcesComponent }
+  
+  { path: 'angular', component: AngularResourcesComponent },
+  { path: '**', component: AppHomeComponent }
+
 ];
 
 @NgModule({
