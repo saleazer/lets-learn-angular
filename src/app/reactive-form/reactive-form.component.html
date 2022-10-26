@@ -1,1 +1,11 @@
-<p>reactive-form works!</p>
+  <div>
+    Sign Up!
+  </div>
+
+    <form novalidate
+          [formGroup]="testForm">
+        <label for="firstNameId">First Name</label>
+          <input id="firstNameId"
+                 type="text"
+                 placeholder="First Name (required)"
+                 formControlName="name"/>
