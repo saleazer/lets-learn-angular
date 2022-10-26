@@ -1,9 +1,15 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { AngularResourcesComponent } from './angular-resources/angular-resources.component';
+import { AppHomeComponent } from './app-home/app-home.component';
+import { AngularResourcesComponent}  from './angular-resources/angular-resources.component'
+import { ReactiveFormComponent } from './reactive-form/reactive-form.component';
 
 const routes: Routes = [
-  { path: '**', component: AngularResourcesComponent }
+
+  { path: 'angular', component: AngularResourcesComponent },
+  { path: 'form', component: ReactiveFormComponent },
+  { path: '**', component: AppHomeComponent }
+
 ];
 
 @NgModule({
