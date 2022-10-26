@@ -8,6 +8,7 @@ import { AppHeaderComponent } from './app-header/app-header.component';
 import { AppFooterComponent } from './app-footer/app-footer.component';
 import { AppHomeComponent } from './app-home/app-home.component';
 import { AngularResourcesComponent } from './angular-resources/angular-resources.component';
+import { ReactiveFormComponent } from './reactive-form/reactive-form.component';
 
 @NgModule({
   declarations: [
@@ -15,7 +16,8 @@ import { AngularResourcesComponent } from './angular-resources/angular-resources
     AppHeaderComponent,
     AppFooterComponent,
     AppHomeComponent,
-    AngularResourcesComponent
+    AngularResourcesComponent,
+    ReactiveFormComponent
   ],
   imports: [
     BrowserModule,
