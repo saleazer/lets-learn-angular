@@ -24,10 +24,10 @@ Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To u
 
 ## Further help
 
-For help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+To get help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
 
 Shoutout to SheCodesOKC for the oppurtunity to learn how to create pull request on GitHub using open source markdown files and code. Thanks for making HacktoberFest a fun learning experience.
 
 Thank you saleazer for letting us learn how source control works via this repository!  ~Spacekat
 
-Pull requests are not as difficult as I expcted, especially with the assistance of a wonderful mentor. 
+ 
