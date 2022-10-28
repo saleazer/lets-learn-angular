@@ -14,6 +14,7 @@ export class ReactiveFormComponent implements OnInit {
   ngOnInit(): void {
     this.testForm = this.fb.group({
       name: ['', Validators.required],
+      favColor: ['']
     })
   }
 
