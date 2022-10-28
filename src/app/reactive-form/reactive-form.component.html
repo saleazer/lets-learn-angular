@@ -4,8 +4,14 @@
 
     <form novalidate
           [formGroup]="testForm">
-        <label for="firstNameId">First Name</label>
+      <label for="firstNameId">First Name</label>
           <input id="firstNameId"
                  type="text"
                  placeholder="First Name (required)"
                  formControlName="name"/>
+      <label for="favColor">Favorite Color</label>
+          <input id="favColor"
+                type="text"
+                placeholder="What's your fav color?"
+                formControlName="favColor"/>
+      </form>
