@@ -10,6 +10,7 @@ export class AppHomeComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
+    console.log("heyy");
   }
 
 }
