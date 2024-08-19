@@ -19,6 +19,14 @@ jobs:
       with:
         fetch-depth: 1
 
+    - name: Setup Node
+      uses: actions/setup-node@v2
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+
+    - name: npm install
+      run: npm i
+
     - name: Get changed files
       id: changed-files
       uses: actions/github-script@v6
@@ -32,6 +40,7 @@ jobs:
 
           const filteredFiles = files
             .map(file => file.filename)
+            .filter(filename => filename.endsWith('.component.ts'))
             .join(', ');
 
           core.setOutput('files', filteredFiles);
@@ -39,27 +48,15 @@ jobs:
     - name: Get diff
       run: echo "The diff is ${{ steps.changed-files.outputs.files }}"
 
-    # - name: Set diff
-    #   id: changed-files
-    #   run: echo "DIFF=$(git diff --name-only -r ${{ github.event.pull_request.head.sha }} ${{ github.event.pull_request.base.sha }} | xargs)" >> $GITHUB_OUTPUT
-
-    # - name: Get diff
-    #   run: echo "The diff is ${{ steps.changed-files.outputs.DIFF }}"
-
-    # - name: Setup Node
-    #   uses: actions/setup-node@v2
-    #   with:
-    #     node-version: ${{ env.NODE_VERSION }}
-
-    # - name: npm install
-    #   run: npm i
-
+    - name: Run Stryker
+      if: ${{ steps.changed-files.outputs.files != '' }}
+      run: npx stryker run --mutate "${{ steps.changed-files.outputs.files }}"
 
     # - name: Run Stryker
     #   run: npx stryker run --mutate "src\app\reactive-form\reactive-form.component.ts"
 
-    # - name: Upload Stryker Report
-    #   uses: actions/upload-artifact@v2
-    #   with:
-    #     name: stryker-report
-    #     path: reports/mutation/mutation.html      
+    - name: Upload Stryker Report
+      uses: actions/upload-artifact@v2
+      with:
+        name: stryker-report
+        path: reports/mutation/mutation.html      
