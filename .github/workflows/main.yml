@@ -27,8 +27,12 @@ jobs:
     - name: npm install
       run: npm i
 
-    # - name: Install Stryker locally
-    #   run: npm install --save-dev @stryker-mutator/core
+    - name: Set diff
+      id: changed-files
+      run: echo "DIFF=$(git diff --name-only -r ${{ github.event.payload.pull_request.head.sha }} ${{ github.event.payload.pull_request.base.sha }} | xargs)" >> $GITHUB_OUTPUT
+
+    - name: Get diff
+      run: echo "The diff is ${{ steps.changed-files.outputs.DIFF }}"
 
     - name: Run Stryker
       run: npx stryker run --mutate "src\app\reactive-form\reactive-form.component.ts"
