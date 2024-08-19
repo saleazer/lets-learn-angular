@@ -58,11 +58,7 @@ jobs:
       id: read-mutation-report
       if: ${{ env.RUN_STRYKER == 'true' }}
       run: |
-          clear_text_report=$(awk '
-                        /All tests/ {flag=1}
-                        flag && /---|/ {dash_count=NR}
-                        flag && dash_count && NR <= dash_count + 5 {print}
-                    ' stryker-output.txt)          
+          clear_text_report=$(awk '/All tests/{flag=1} /HtmlReporter/{flag=0} flag' stryker-output.txt)
           echo "CLEAR_TEXT_REPORT<<EOF" >> $GITHUB_ENV
           echo "$clear_text_report" >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
@@ -78,7 +74,7 @@ jobs:
             issue_number: context.issue.number,
             owner: context.repo.owner,
             repo: context.repo.repo,
-            body: `Here is the mutation report:\n\n${reportContent}`
+            body: "Here is the mutation report:\n\n\${reportContent}"
           });
 
     # - name: Upload Stryker Report
