@@ -8,6 +8,8 @@ on:
 
 env:
   NODE_VERSION: "18.19"
+  RUN_STRYKER: "false"
+  MUTATION_REPORT: ""
 
 jobs:
   buildClient:
@@ -44,26 +46,27 @@ jobs:
             .join(', ');
 
           core.setOutput('files', filteredFiles);
-  
-    - name: Get diff
-      run: echo "The diff is ${{ steps.changed-files.outputs.files }}"
 
+          if (filteredFiles !== '') {
+            core.exportVariable('RUN_STRYKER', true);
+          }
+  
     - name: Run Stryker
-      if: ${{ steps.changed-files.outputs.files != '' }}
+      if: ${{ env.RUN_STRYKER == 'true' }}
       run: npx stryker run --mutate "${{ steps.changed-files.outputs.files }}"
 
     - name: Read mutation report
       id: read-mutation-report
-      if: ${{ steps.changed-files.outputs.files != '' }}
+      if: ${{ env.RUN_STRYKER == 'true' }}
       uses: actions/github-script@v6
       with:
         script: |
           const fs = require('fs');
           const reportContent = fs.readFileSync('reports/mutation/mutation.html', 'utf8');
-          core.setOutput('report', reportContent);
+          core.exportVariable('MUTATION_REPORT', reportContent);
 
     - name: Comment Mutation Results
-      if: ${{ steps.changed-files.outputs.files != '' }}
+      if: ${{ env.RUN_STRYKER == 'true' }}
       uses: actions/github-script@v6
       with:
         github-token: ${{secrets.GITHUB_TOKEN}}
