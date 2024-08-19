@@ -7,7 +7,7 @@ on:
     branches: ["master"]
 
 env:
-  NODE_VERSION: "18.17"
+  NODE_VERSION: "18.19"
 
 jobs:
   buildClient:
@@ -27,8 +27,8 @@ jobs:
     - name: npm install
       run: npm i
 
-    - name: Install Stryker locally
-      run: npm install --save-dev @stryker-mutator/core
+    # - name: Install Stryker locally
+    #   run: npm install --save-dev @stryker-mutator/core
 
     - name: Run Stryker
       run: npx stryker run --mutate "src\app\reactive-form\reactive-form.component.ts"
