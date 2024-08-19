@@ -55,7 +55,12 @@ jobs:
     - name: Read mutation report
       id: read-mutation-report
       if: ${{ steps.changed-files.outputs.files != '' }}
-      run: echo "report=$(cat reports/mutation/mutation.html)" >> $GITHUB_OUTPUT
+      uses: actions/github-script@v6
+      with:
+        script: |
+          const fs = require('fs');
+          const reportContent = fs.readFileSync('reports/mutation/mutation.html', 'utf8');
+          core.setOutput('report', reportContent);
 
     - name: Comment Mutation Results
       if: ${{ steps.changed-files.outputs.files != '' }}
