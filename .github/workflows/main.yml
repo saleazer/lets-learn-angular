@@ -52,9 +52,9 @@ jobs:
       if: ${{ steps.changed-files.outputs.files != '' }}
       run: npx stryker run --mutate "${{ steps.changed-files.outputs.files }}"
 
-    - name: Upload Stryker Report
+    - name: Create a PR comment
       if: ${{ steps.changed-files.outputs.files != '' }}
-      uses: actions/upload-artifact@v2
-      with:
-        name: stryker-report
-        path: reports/mutation/mutation.html      
+      uses: im-open/process-code-coverage-summary@v2.0.2
+      with: 
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        summary-file: './reports/mutation/index.html'
