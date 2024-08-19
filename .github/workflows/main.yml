@@ -30,7 +30,7 @@ jobs:
       uses: actions/github-script@v6
       with:
         script: |
-          const { data: files } = await github.pulls.listFiles({
+          const { data: files } = await github.rest.pulls.listFiles({
             owner: context.repo.owner,
             repo: context.repo.repo,
             pull_number: context.payload.pull_request.number
@@ -45,7 +45,7 @@ jobs:
   
     - name: Get diff
       run: echo "The diff is ${{ steps.changed-files.outputs.files }}"
-      
+
     # - name: Set diff
     #   id: changed-files
     #   run: echo "DIFF=$(git diff --name-only -r ${{ github.event.pull_request.head.sha }} ${{ github.event.pull_request.base.sha }} | xargs)" >> $GITHUB_OUTPUT
