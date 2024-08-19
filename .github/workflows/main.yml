@@ -74,7 +74,7 @@ jobs:
             issue_number: context.issue.number,
             owner: context.repo.owner,
             repo: context.repo.repo,
-            body: "Here is the mutation report:\n\n\${reportContent}"
+            body: `Here is the mutation report:\n\n\`\`\`\n${reportContent}\n\`\`\``
           });
 
     # - name: Upload Stryker Report
