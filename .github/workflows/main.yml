@@ -2,7 +2,7 @@ name: FleetWebClient
 
 on:
   push:
-    branches: ["master", "lets-learn-yml-0815"]
+    branches: ["master"]
   pull_request:
     branches: ["master"]
 
