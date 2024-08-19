@@ -55,10 +55,7 @@ jobs:
     - name: Read mutation report
       id: read-mutation-report
       if: ${{ steps.changed-files.outputs.files != '' }}
-      run: |
-          echo "REPORT_CONTENT<<EOF" >> $GITHUB_ENV
-          cat reports/mutation/mutation.html >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
+      run: echo "report=$(cat reports/mutation/mutation.html)" >> $GITHUB_OUTPUT
 
     - name: Comment Mutation Results
       if: ${{ steps.changed-files.outputs.files != '' }}
@@ -66,7 +63,7 @@ jobs:
       with:
         github-token: ${{secrets.GITHUB_TOKEN}}
         script: |
-          const reportContent = process.env.REPORT_CONTENT;
+          const reportContent = steps.read-mutation-report.outputs.report;
           github.rest.issues.createComment({
             issue_number: context.issue.number,
             owner: context.repo.owner,
