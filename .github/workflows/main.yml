@@ -52,9 +52,28 @@ jobs:
       if: ${{ steps.changed-files.outputs.files != '' }}
       run: npx stryker run --mutate "${{ steps.changed-files.outputs.files }}"
 
-    - name: Create a PR comment
+    - name: Read mutation report
       if: ${{ steps.changed-files.outputs.files != '' }}
-      uses: im-open/process-code-coverage-summary@v2.0.2
-      with: 
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        summary-file: 'reports/mutation/mutation.html'
+      run: |
+        REPORT_CONTENT=$(cat reports/mutation/mutation.html)
+        echo "::set-output name=report_content::$REPORT_CONTENT"
+
+    - name: Comment Mutation Results
+      if: ${{ steps.changed-files.outputs.files != '' }}
+      uses: actions/github-script@v6
+      with:
+        github-token: ${{secrets.GITHUB_TOKEN}}
+        script: |
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: 'Here is the mutation report:\n\n${process.env.REPORT_CONTENT}'
+          });
+
+    # - name: Upload Stryker Report
+    #   if: ${{ steps.changed-files.outputs.files != '' }}
+    #   uses: actions/upload-artifact@v2
+    #   with:
+    #     name: stryker-report
+    #     path: reports/mutation/mutation.html      
