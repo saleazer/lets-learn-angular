@@ -40,7 +40,7 @@ jobs:
 
           const filteredFiles = files
             .map(file => file.filename)
-            .filter(filename => filename.endsWith('.nothingToMatch.ts'))
+            .filter(filename => filename.endsWith('.component.ts'))
             .join(', ');
 
           core.setOutput('files', filteredFiles);
@@ -52,10 +52,8 @@ jobs:
       if: ${{ steps.changed-files.outputs.files != '' }}
       run: npx stryker run --mutate "${{ steps.changed-files.outputs.files }}"
 
-    # - name: Run Stryker
-    #   run: npx stryker run --mutate "src\app\reactive-form\reactive-form.component.ts"
-
     - name: Upload Stryker Report
+      if: ${{ steps.changed-files.outputs.files != '' }}
       uses: actions/upload-artifact@v2
       with:
         name: stryker-report
