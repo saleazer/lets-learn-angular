@@ -29,7 +29,7 @@ jobs:
 
     - name: Set diff
       id: changed-files
-      run: echo "DIFF=$(git diff --name-only -r ${{ github.event.payload.pull_request.head.sha }} ${{ github.event.payload.pull_request.base.sha }} | xargs)" >> $GITHUB_OUTPUT
+      run: echo "DIFF=$(git diff --name-only -r ${{ github.event.pull_request.head.sha }} ${{ github.event.pull_request.base.sha }} | xargs)" >> $GITHUB_OUTPUT
 
     - name: Get diff
       run: echo "The diff is ${{ steps.changed-files.outputs.DIFF }}"
