@@ -52,15 +52,15 @@ jobs:
   
     - name: Run Stryker
       if: ${{ env.RUN_STRYKER == 'true' }}
-      run: npx stryker run --mutate "${{ steps.changed-files.outputs.files }}"
+      run: npx stryker run --mutate "${{ steps.changed-files.outputs.files }}" | tee stryker-output.txt
 
     - name: Read mutation report
       id: read-mutation-report
       if: ${{ env.RUN_STRYKER == 'true' }}
       run: |
-          mutation_report=$(cat reports/mutation/mutation.html)
-          echo "MUTATION_REPORT<<EOF" >> $GITHUB_ENV
-          echo "$mutation_report" >> $GITHUB_ENV
+          clear_text_report=$(cat stryker-output.txt)
+          echo "CLEAR_TEXT_REPORT<<EOF" >> $GITHUB_ENV
+          echo "$clear_text_report" >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
 
     - name: Comment Mutation Results
@@ -69,7 +69,7 @@ jobs:
       with:
         github-token: ${{secrets.GITHUB_TOKEN}}
         script: |
-          const reportContent = process.env.MUTATION_REPORT;
+          const reportContent = process.env.CLEAR_TEXT_REPORT;
           github.rest.issues.createComment({
             issue_number: context.issue.number,
             owner: context.repo.owner,
