@@ -32,15 +32,9 @@ jobs:
 
     - name: Run Stryker
       run: npx stryker run --mutate "src\app\reactive-form\reactive-form.component.ts"
-      
-    # - name: stryker install and run
-    #   run: |
-    #     npm i -g stryker-cli
-    #     stryker run --mutate "src\app\reactive-form\reactive-form.component.ts"
 
-    # - name: stryker install
-    #   run: npm i -g stryker-cli
-
-    # - name: stryker run
-    #   run: stryker run --mutate "src\app\reactive-form\reactive-form.component.ts"
-
+    - name: Upload Stryker Report
+      uses: actions/upload-artifact@v2
+      with:
+        name: stryker-report
+        path: reports/mutation/mutation.html      
