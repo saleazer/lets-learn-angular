@@ -27,9 +27,14 @@ jobs:
     - name: npm install
       run: npm i
 
-    - name: stryker install
-      run: npm i -g stryker-cli
+    - name: stryker install and run
+      run: |
+        npm i -g stryker-cli
+        stryker run --mutate "src\app\reactive-form\reactive-form.component.ts"
 
-    - name: stryker run
-      run: stryker run --mutate "src\app\reactive-form\reactive-form.component.ts"
+    # - name: stryker install
+    #   run: npm i -g stryker-cli
+
+    # - name: stryker run
+    #   run: stryker run --mutate "src\app\reactive-form\reactive-form.component.ts"
 
