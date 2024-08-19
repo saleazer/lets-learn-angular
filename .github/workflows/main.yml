@@ -40,7 +40,7 @@ jobs:
 
           const filteredFiles = files
             .map(file => file.filename)
-            .filter(filename => filename.endsWith('.component.ts'))
+            .filter(filename => filename.endsWith('.nothingToMatch.ts'))
             .join(', ');
 
           core.setOutput('files', filteredFiles);
