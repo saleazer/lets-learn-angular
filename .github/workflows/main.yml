@@ -59,7 +59,7 @@ jobs:
       if: ${{ env.RUN_STRYKER == 'true' }}
       run: |
           mutation_score=$(grep -oP '^All files\s+\|\s+\K[0-9]+(\.[0-9]+)?(?=\s+\|)' stryker-output.txt)
-          echo "mutation_score=$MUTATION_SCORE" >> $GITHUB_ENV
+          echo "MUTATION_SCORE=$mutation_score" >> $GITHUB_ENV
           clear_text_report=$(awk '/tests per mutant/{flag=1} /HtmlReporter/{flag=0} flag' stryker-output.txt)
           echo "CLEAR_TEXT_REPORT<<EOF" >> $GITHUB_ENV
           echo "$clear_text_report" >> $GITHUB_ENV
