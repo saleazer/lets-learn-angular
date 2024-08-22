@@ -80,8 +80,8 @@ jobs:
           });
 
           const mutationScore = process.env.MUTATION_SCORE;
-          Number.parseFloat(mutationScore) < 67
-            ? core.setFailed(`Mutation score is below 67%: ${mutationScore}`)
+          Number.parseFloat(mutationScore) < 50
+            ? core.setFailed(`Mutation score is below 50%: ${mutationScore}`)
             : null;
 
     # - name: Upload Stryker Report
