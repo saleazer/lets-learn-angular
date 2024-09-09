@@ -2,7 +2,7 @@ name: FleetWebClientScheduled
 
 on:
   schedule:
-    - cron: '40 11 * * 1'
+    - cron: '59 11 * * 1'
 
 env:
   ENVIRONMENT_PATH: src/assets/environment.json
@@ -39,9 +39,9 @@ jobs:
             pull_number: context.payload.pull_request.number
           });
 
-          const filteredFiles = files
-            .map(file => file.filename)
-            .filter(filename => filename.endsWith('.component.ts'))
+          const allFiles = files
+            .filter(file => file.type === 'file' && file.path.endsWith('component.ts'))
+            .map(file => file.path)
             .join(', ');
 
           core.setOutput('files', filteredFiles);
