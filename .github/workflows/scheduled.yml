@@ -2,7 +2,7 @@ name: FleetWebClientScheduled
 
 on:
   schedule:
-    - cron: '*/10 * * * *'
+    - cron: '*/5 * * * *'
 
 env:
   ENVIRONMENT_PATH: src/assets/environment.json
@@ -33,23 +33,37 @@ jobs:
       uses: actions/github-script@v6
       with:
         script: |
-          const { data: files } = await github.rest.repos.getContent({
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            path: '',
-          });
+          const getAllFiles = async (octokit, owner, repo, path = '') => {
+            const { data: items } = await octokit.rest.repos.getContent({
+              owner,
+              repo,
+              path,
+            });
 
-          const filteredFiles = files
-            .filter(file => file.type === 'file' && file.path.endsWith('component.ts'))
-            .map(file => file.path)
-            .join(', ');
+            let files = [];
+            for (const item of items) {
+              if (item.type === 'file' && item.path.endsWith('.component.ts')) {
+                files.push(item.path);
+              } else if (item.type === 'dir') {
+                const subFiles = await getAllFiles(octokit, owner, repo, item.path);
+                files = files.concat(subFiles);
+              }
+            }
 
-          core.setOutput('files', filteredFiles);
+            return files;
+          };
+
+          const files = await getAllFiles(github, context.repo.owner, context.repo.repo);
+          const allFiles = files.join(', ');
+
+          console.log('All .component.ts files:', allFiles);
+
+          core.setOutput('files', allFiles);
 
           if (filteredFiles !== '') {
             core.exportVariable('RUN_STRYKER', true);
           }
-  
+      
     - name: Run Stryker
       if: ${{ env.RUN_STRYKER == 'true' }}
       run: npx stryker run --mutate "${{ steps.changed-files.outputs.files }}" | tee stryker-output.txt
