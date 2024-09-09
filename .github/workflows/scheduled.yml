@@ -33,10 +33,10 @@ jobs:
       uses: actions/github-script@v6
       with:
         script: |
-          const { data: files } = await github.rest.pulls.listFiles({
+          const { data: files } = await github.rest.repos.getContent({
             owner: context.repo.owner,
             repo: context.repo.repo,
-            pull_number: context.payload.pull_request.number
+            path: '',
           });
 
           const filteredFiles = files
