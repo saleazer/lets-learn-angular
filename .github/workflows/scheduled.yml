@@ -2,7 +2,7 @@ name: FleetWebClientScheduled
 
 on:
   schedule:
-    - cron: '*/5 * * * *'
+    - cron: '18 23 * * 1'
 
 env:
   ENVIRONMENT_PATH: src/assets/environment.json
