@@ -18,4 +18,15 @@ export class ReactiveFormComponent implements OnInit {
     })
   }
 
+  timesTwo(entry: number): number {
+    return entry * 2;
+  }
+
+  timesFour(entry: number): number {
+    return entry * 4;
+  }
+
+  timesEight(entry: number): number {
+    return entry * 8;
+  }
 }
