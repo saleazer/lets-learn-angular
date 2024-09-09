@@ -39,7 +39,7 @@ jobs:
             pull_number: context.payload.pull_request.number
           });
 
-          const allFiles = files
+          const filteredFiles = files
             .filter(file => file.type === 'file' && file.path.endsWith('component.ts'))
             .map(file => file.path)
             .join(', ');
