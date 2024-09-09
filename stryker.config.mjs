@@ -20,5 +20,6 @@ const config = {
   concurrency_comment:
     "Recommended to use about half of your available cores when running stryker with Angular",
   coverageAnalysis: "perTest",
+  ignoreStatic: true
 };
 export default config;
