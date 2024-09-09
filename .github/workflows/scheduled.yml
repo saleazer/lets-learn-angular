@@ -8,7 +8,6 @@ env:
   ENVIRONMENT_PATH: src/assets/environment.json
   DIST_PATH: dist
   NODE_VERSION: "20.9.0"
-  RUN_STRYKER: "false"
 
 jobs:
   buildClient:
@@ -27,50 +26,12 @@ jobs:
 
     - name: npm install
       run: npm i
-
-    - name: Get changed files
-      id: changed-files
-      uses: actions/github-script@v6
-      with:
-        script: |
-          const getAllFiles = async (octokit, owner, repo, path = '') => {
-            const { data: items } = await octokit.rest.repos.getContent({
-              owner,
-              repo,
-              path,
-            });
-
-            let files = [];
-            for (const item of items) {
-              if (item.type === 'file' && item.path.endsWith('.component.ts')) {
-                files.push(item.path);
-              } else if (item.type === 'dir') {
-                const subFiles = await getAllFiles(octokit, owner, repo, item.path);
-                files = files.concat(subFiles);
-              }
-            }
-
-            return files;
-          };
-
-          const files = await getAllFiles(github, context.repo.owner, context.repo.repo);
-          const allFiles = files.join(', ');
-
-          console.log('All .component.ts files:', allFiles);
-
-          core.setOutput('files', allFiles);
-
-          if (filteredFiles !== '') {
-            core.exportVariable('RUN_STRYKER', true);
-          }
       
     - name: Run Stryker
-      if: ${{ env.RUN_STRYKER == 'true' }}
-      run: npx stryker run --mutate "${{ steps.changed-files.outputs.files }}" | tee stryker-output.txt
+      run: npx stryker run | tee stryker-output.txt
 
     - name: Read mutation report
       id: read-mutation-report
-      if: ${{ env.RUN_STRYKER == 'true' }}
       run: |
           mutation_score=$(grep -oP '^All files\s+\|\s+\K[0-9]+(\.[0-9]+)?(?=\s+\|)' stryker-output.txt)
           
@@ -82,7 +43,6 @@ jobs:
           echo "EOF" >> $GITHUB_ENV
 
     - name: Comment Mutation Results
-      if: ${{ env.RUN_STRYKER == 'true' }}
       uses: actions/github-script@v6
       with:
         github-token: ${{secrets.GITHUB_TOKEN}}

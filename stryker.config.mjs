@@ -2,7 +2,7 @@
 /** @type {import('@stryker-mutator/api/core').PartialStrykerOptions} */
 const config = {
   mutate: [
-    "src/**/*.ts",
+    "src/**/*component.ts",
     "!src/**/*.spec.ts",
     "!src/test.ts",
     "!src/environments/*.ts",
