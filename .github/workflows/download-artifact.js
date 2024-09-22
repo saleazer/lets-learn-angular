@@ -6,7 +6,7 @@ const path = require('path');
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 const OWNER = process.env.OWNER;
 const REPO = process.env.REPO;
-const WORKFLOW_FILE_NAME = process.env.WORKFLOW_FILE_NAME;
+const WORKFLOW_NAME = process.env.WORKFLOW_FILE_NAME;
 const ARTIFACT_NAME = process.env.ARTIFACT_NAME;
 
 async function fetchWorkflowId() {
@@ -18,9 +18,10 @@ async function fetchWorkflowId() {
         }
     });
 
-    console.log(`fetchWorkflowId Response status: ${response.status}`);
+    console.log(`fetchWorkflowId Response is: ${response}`);
 
-    const workflow = response.data.workflows.find(wf => wf.path.endsWith(WORKFLOW_FILE_NAME));
+
+    const workflow = response.data.workflows.find(wf => wf.name.contains(WORKFLOW_NAME));
     if (!workflow) {
         throw new Error(`Workflow file ${WORKFLOW_FILE_NAME} not found`);
     }
