@@ -6,26 +6,43 @@ const path = require('path');
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 const OWNER = process.env.OWNER;
 const REPO = process.env.REPO;
-const WORKFLOW_ID = process.env.WORKFLOW_ID;
+const WORKFLOW_FILE_NAME = process.env.WORKFLOW_FILE_NAME;
 const ARTIFACT_NAME = process.env.ARTIFACT_NAME;
 
+async function fetchWorkflowId() {
+    const url = `https://api.github.com/repos/${OWNER}/${REPO}/actions/workflows`;
+    const response = await axios.get(url, {
+        headers: {
+        Authorization: `token ${GITHUB_TOKEN}`
+        }
+    });
+
+    const workflow = response.data.workflows.find(wf => wf.path.endsWith(WORKFLOW_FILE_NAME));
+    if (!workflow) {
+        throw new Error(`Workflow file ${WORKFLOW_FILE_NAME} not found`);
+    }
+
+    return workflow.id;
+}
+
 async function getLatestSuccessfulRun() {
-  console.log(`Fetching latest successful run for workflow ID: ${WORKFLOW_ID}`);
-  const url = `https://api.github.com/repos/${OWNER}/${REPO}/actions/workflows/${WORKFLOW_ID}/runs`;
-  console.log(`Request URL: ${url}`);
-  const response = await axios.get(url, {
+    const WORKFLOW_ID = await fetchWorkflowId();
+    console.log(`Fetching latest successful run for workflow ID: ${WORKFLOW_ID}`);
+    const url = `https://api.github.com/repos/${OWNER}/${REPO}/actions/workflows/${WORKFLOW_ID}/runs`;
+    console.log(`Request URL: ${url}`);
+    const response = await axios.get(url, {
     headers: {
-      Authorization: `token ${GITHUB_TOKEN}`
+        Authorization: `token ${GITHUB_TOKEN}`
     },
     params: {
-      status: 'success',
-      per_page: 1
+        status: 'success',
+        per_page: 1
     }
-  });
+    });
 
-  console.log(`Response status: ${response.status}`);
-  const run = response.data.workflow_runs[0];
-  return run ? run.id : null;
+    console.log(`Response status: ${response.status}`);
+    const run = response.data.workflow_runs[0];
+    return run ? run.id : null;
 }
 
 async function getArtifactId(runId) {

@@ -36,7 +36,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         OWNER: ${{ github.repository_owner }}
         REPO: ${{ github.event.repository.name }}
-        WORKFLOW_ID: your_workflow_id
+        WORKFLOW_FILE_NAME: scheduled.yml
         ARTIFACT_NAME: stryker-incremental
 
     - name: Run Stryker
