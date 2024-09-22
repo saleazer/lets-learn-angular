@@ -53,7 +53,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: stryker-incremental
-        path: reports/stryker-incremental.json
+        path: /home/runner/work/lets-learn-angular/lets-learn-angular/.github/workflows/extracted_artifact/stryker-incremental.json
   
     - name: Upload Stryker Coverage Report
       uses: actions/upload-artifact@v4
