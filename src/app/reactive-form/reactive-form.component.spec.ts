@@ -22,7 +22,7 @@ describe('ReactiveFormComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  describe("timesTwoTestChange", () => {
+  describe("timesTwoTest", () => {
     it("should return the input value multiplied by two", () => {
       let results = component.timesTwo(2);
 
@@ -30,7 +30,7 @@ describe('ReactiveFormComponent', () => {
     });
   });
 
-  describe("timesFourTestChange", () => {
+  describe("timesFourTest", () => {
     it("should return the input value multiplied by four", () => {
       let results = component.timesFour(2);
 
