@@ -46,7 +46,7 @@ jobs:
           npx stryker run
         else
           echo "Artifact found, continuing Stryker incremental run."
-          npx stryker run --incrementalFile /home/runner/work/lets-learn-angular/lets-learn-angular/.github/workflows/extracted_artifact/stryker-incremental.json
+          npx stryker run --incrementalFile extracted_artifact/stryker-incremental.json
         fi
 
     - name: Upload Stryker Incremental Report
