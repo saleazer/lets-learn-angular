@@ -6,11 +6,11 @@ const path = require('path');
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 const OWNER = process.env.OWNER;
 const REPO = process.env.REPO;
-const WORKFLOW_NAME = process.env.WORKFLOW_FILE_NAME;
+const WORKFLOW_NAME = process.env.WORKFLOW_NAME;
 const ARTIFACT_NAME = process.env.ARTIFACT_NAME;
 
 async function fetchWorkflowId() {
-    console.log(`fetchWorkflowId: ${WORKFLOW_FILE_NAME}`);
+    console.log(`fetchWorkflowId: ${WORKFLOW_NAME}`);
     const url = `https://api.github.com/repos/${OWNER}/${REPO}/actions/workflows`;
     const response = await axios.get(url, {
         headers: {
