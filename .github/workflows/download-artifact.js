@@ -59,6 +59,7 @@ async function getArtifactId(runId) {
   });
 
   console.log(`getArtifactId Response status: ${response.status}`);
+  console.log(`getArtifactId: ${response.data.artifacts}`);
   const artifact = response.data.artifacts.find(artifact => artifact.name === ARTIFACT_NAME);
   console.log(`getArtifactId: ${artifact}`);
   return artifact ? artifact.id : null;

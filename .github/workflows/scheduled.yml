@@ -43,20 +43,18 @@ jobs:
       run: |
         if [ -f artifact_error.flag ]; then
           echo "Artifact error, initializing Stryker incremental run."
-          npx stryker run
         else
           echo "Artifact found, continuing Stryker incremental run."
-          npx stryker run --incrementalFile extracted_artifact/stryker-incremental.json
         fi
 
-    - name: Upload Stryker Incremental Report
-      uses: actions/upload-artifact@v4
-      with:
-        name: stryker-incremental
-        path: /home/runner/work/lets-learn-angular/lets-learn-angular/reports/stryker-incremental.json
+    # - name: Upload Stryker Incremental Report
+    #   uses: actions/upload-artifact@v4
+    #   with:
+    #     name: stryker-incremental
+    #     path: reports/stryker-incremental.json
   
-    - name: Upload Stryker Coverage Report
-      uses: actions/upload-artifact@v4
-      with:
-        name: stryker-coverage
-        path: /home/runner/work/lets-learn-angular/lets-learn-angular/reports/mutation/mutation.html
+    # - name: Upload Stryker Coverage Report
+    #   uses: actions/upload-artifact@v4
+    #   with:
+    #     name: stryker-coverage
+    #     path: reports/mutation/mutation.html
