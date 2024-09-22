@@ -41,9 +41,9 @@ jobs:
 
     - name: Run Stryker
       run: |
-        if [ -f home/runner/work/lets-learn-angular/lets-learn-angular/.github/workflows/extracted_artifact/stryker-incremental.json ]; then
+        if [ -f /home/runner/work/lets-learn-angular/lets-learn-angular/.github/workflows/extracted_artifact/stryker-incremental.json ]; then
           echo "Artifact found, continuing Stryker incremental run."
-          npx stryker run --incremental --incrementalFile home/runner/work/lets-learn-angular/lets-learn-angular/.github/workflows/extracted_artifact/stryker-incremental.json
+          npx stryker run --incremental --incrementalFile /home/runner/work/lets-learn-angular/lets-learn-angular/.github/workflows/extracted_artifact/stryker-incremental.json
         else
           echo "Artifact not found, initializing full Stryker run."
           npx stryker run --incremental
