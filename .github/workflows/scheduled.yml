@@ -8,6 +8,7 @@ env:
   ENVIRONMENT_PATH: src/assets/environment.json
   DIST_PATH: dist
   NODE_VERSION: "20.9.0"
+  INCREMENTAL_PATH: reports/stryker-incremental.json
 
 jobs:
   buildClient:
@@ -44,6 +45,7 @@ jobs:
         if [ -f /home/runner/work/lets-learn-angular/lets-learn-angular/.github/workflows/extracted_artifact/stryker-incremental.json ]; then
           echo "Artifact found, continuing Stryker incremental run."
           npx stryker run --incremental --incrementalFile /home/runner/work/lets-learn-angular/lets-learn-angular/.github/workflows/extracted_artifact/stryker-incremental.json
+          echo "INCREMENTAL_PATH=/home/runner/work/lets-learn-angular/lets-learn-angular/.github/workflows/extracted_artifact/stryker-incremental.json" >> $GITHUB_ENV
         else
           echo "Artifact not found, initializing full Stryker run."
           npx stryker run --incremental
@@ -53,7 +55,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: stryker-incremental
-        path: /home/runner/work/lets-learn-angular/lets-learn-angular/.github/workflows/extracted_artifact/stryker-incremental.json
+        path: ${{ env.INCREMENTAL_PATH }}
   
     - name: Upload Stryker Coverage Report
       uses: actions/upload-artifact@v4
