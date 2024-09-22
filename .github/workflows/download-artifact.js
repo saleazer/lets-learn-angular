@@ -18,10 +18,10 @@ async function fetchWorkflowId() {
         }
     });
 
-    console.log(`fetchWorkflowId Response is: ${response}`);
+    console.log(`fetchWorkflowId Response status: ${response.status}`);
 
 
-    const workflow = response.data.workflows.find(wf => wf.name.contains(WORKFLOW_NAME));
+    const workflow = response.data.workflows.find(wf => wf.name.includes(WORKFLOW_NAME));
     if (!workflow) {
         throw new Error(`Workflow file ${WORKFLOW_FILE_NAME} not found`);
     }
