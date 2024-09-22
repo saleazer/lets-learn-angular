@@ -15,20 +15,39 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
       with:
         fetch-depth: 1
 
     - name: Setup Node
-      uses: actions/setup-node@v2
+      uses: actions/setup-node@v4
       with:
         node-version: ${{ env.NODE_VERSION }}
 
     - name: npm install
       run: npm i
-      
+        
+    - name: Install Temporary Dependencies
+      run: npm install axios adm-zip
+
+    - name: Download and Extract Artifact
+      run: node .github/workflows/download-artifact.js
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        OWNER: ${{ github.repository_owner }}
+        REPO: ${{ github.event.repository.name }}
+        WORKFLOW_ID: your_workflow_id
+        ARTIFACT_NAME: stryker-incremental
+
     - name: Run Stryker
-      run: npx stryker run --incremental
+      run: |
+        if [ -f artifact_error.flag ]; then
+          echo "Artifact error, initializing Stryker incremental run."
+          npx stryker run
+        else
+          echo "Artifact found, continuing Stryker incremental run."
+          npx stryker run --incrementalFile extracted_artifact/stryker-incremental.json
+        fi
 
     - name: Upload Stryker Incremental Report
       uses: actions/upload-artifact@v4
