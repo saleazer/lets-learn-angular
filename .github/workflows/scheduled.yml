@@ -47,18 +47,18 @@ jobs:
           if [ "$COMPONENT_COUNT" = 'complete' ]; then
             echo "Component counting is complete, running Stryker incremental with all files."
             npx stryker run --incremental --incrementalFile /home/runner/work/lets-learn-angular/lets-learn-angular/.github/workflows/extracted_artifact/stryker-incremental.json
-          else if [ "$COMPONENT_FILES" != '']; then
+          elif [ "$COMPONENT_FILES" != '' ]; then
             echo "Component count is $COMPONENT_COUNT, running Stryker incremental with $COMPONENT_FILES."
             npx stryker run --incremental --incrementalFile /home/runner/work/lets-learn-angular/lets-learn-angular/.github/workflows/extracted_artifact/stryker-incremental.json --files "$COMPONENT_FILES"
           else
-            echo "Component count is $COMPONENT_COUNT, but no component files were defined to stryke.  Unable to run Stryker incremental."
+            echo "Component count is $COMPONENT_COUNT, but no component files were defined to stryke. Unable to run Stryker incremental."
           fi
           echo "INCREMENTAL_PATH=/home/runner/work/lets-learn-angular/lets-learn-angular/.github/workflows/extracted_artifact/stryker-incremental.json" >> $GITHUB_ENV
-        else if [ "$COMPONENT_FILES" = '']; then
-          echo "Artifact not found, and no component files were defined to stryke.  Unable to run Stryker incremental."
+        elif [ "$COMPONENT_FILES" = '' ]; then
+          echo "Artifact not found, and no component files were defined to stryke. Unable to run Stryker incremental."
         else
           echo "Artifact not found, running Stryker incremental with $COMPONENT_FILES."
-          npx stryker run --incremental --files "$COMPONENT_FILES" 
+          npx stryker run --incremental --files "$COMPONENT_FILES"
         fi
 
     - name: Upload Stryker Incremental Report
