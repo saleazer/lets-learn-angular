@@ -2,48 +2,27 @@ const axios = require('axios');
 const AdmZip = require('adm-zip');
 const fs = require('fs');
 const path = require('path');
+const core = require('@actions/core');
+const github = require('@actions/github');
 
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 const OWNER = process.env.OWNER;
 const REPO = process.env.REPO;
-const WORKFLOW_NAME = process.env.WORKFLOW_NAME;
+const WORKFLOW_ID = process.env.WORKFLOW_ID;
 const ARTIFACT_NAME = process.env.ARTIFACT_NAME;
 
-async function fetchWorkflowId() {
-    console.log(`fetchWorkflowId for: ${WORKFLOW_NAME}`);
-    const url = `https://api.github.com/repos/${OWNER}/${REPO}/actions/workflows`;
-    const response = await axios.get(url, {
-        headers: {
-        Authorization: `token ${GITHUB_TOKEN}`
-        }
-    });
-
-    console.log(`fetchWorkflowId Response status: ${response.status}`);
-
-
-    const workflow = response.data.workflows.find(wf => wf.name.includes(WORKFLOW_NAME));
-    if (!workflow) {
-        throw new Error(`Workflow file ${WORKFLOW_FILE_NAME} not found`);
-    }
-
-    console.log(`workflowId= ${workflow.id}`);
-    return workflow.id;
-}
+let previousCount = 0;
 
 async function getLatestSuccessfulRun() {
-    const WORKFLOW_ID = await fetchWorkflowId();
     console.log(`getLatestSuccessfulRun for ${WORKFLOW_ID}`);
     const url = `https://api.github.com/repos/${OWNER}/${REPO}/actions/workflows/${WORKFLOW_ID}/runs`;
     const response = await axios.get(url, {
-    headers: {
-        Authorization: `token ${GITHUB_TOKEN}`
-    },
-    params: {
-        status: 'success',
-        per_page: 1
-    }
+        headers: { Authorization: `token ${GITHUB_TOKEN}` },
+        params: {
+            status: 'success',
+            per_page: 1
+        }
     });
-
     console.log(`getLatestSuccessfulRun Response status: ${response.status}`);
     const run = response.data.workflow_runs[0];
     console.log(`latestSuccessfulRunId= ${run.id}`);
@@ -60,7 +39,10 @@ async function getArtifactId(runId) {
   });
 
   console.log(`getArtifactId Response status: ${response.status}`);
-  const artifact = response.data.artifacts.find(artifact => artifact.name === ARTIFACT_NAME);
+  const artifact = response.data.artifacts.find(artifact => artifact.name.includes(ARTIFACT_NAME));
+  if (artifact.name.includes('_')) {
+    previousCount = artifact.name.split('_')[1];
+  }
   console.log(`artifactId= ${artifact.id}`);
   return artifact ? artifact.id : null;
 }
@@ -91,6 +73,37 @@ function extractArtifact(zipPath) {
   return extractPath;
 }
 
+async function getComponentFiles() {
+    if (previousCount === 'complete') {
+        core.exportVariable('COMPONENT_COUNT', 'complete');
+        return;
+    }
+    try {
+        const { context } = github;
+        const { data: files } = await github.rest.pulls.listFiles({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            pull_number: context.payload.pull_request.number
+        });
+
+        const componentFiles = files
+            .map(file => file.filename)
+            .filter(filename => filename.endsWith('.component.ts'));
+
+        const componentsToStryke = componentFiles.slice(0, previousCount+1);
+  
+        if (componentFiles.length > 0 && componentFiles.length === componentsToStryke.length) {
+            core.exportVariable('COMPONENT_COUNT', 'complete');
+        } else {
+            core.exportVariable('COMPONENT_FILES', componentsToStryke.join(', '));
+            core.exportVariable('COMPONENT_COUNT', previousCount+1);
+        }
+
+    } catch (error) {
+        core.setFailed(error.message);
+    }
+  }
+
 (async () => {
   try {
     const runId = await getLatestSuccessfulRun();
@@ -117,6 +130,9 @@ function extractArtifact(zipPath) {
       return;
     }
     console.log(`Artifact file found at: ${artifactFilePath}`);
+
+    getComponentFiles();
+
   } catch (error) {
     console.error(`Error: ${error.message}`);
   }

@@ -5,10 +5,10 @@ on:
     branches: ["master"]
 
 env:
-  ENVIRONMENT_PATH: src/assets/environment.json
-  DIST_PATH: dist
   NODE_VERSION: "20.9.0"
   INCREMENTAL_PATH: reports/stryker-incremental.json
+  COMPONENT_COUNT: 1
+  COMPONENT_FILES: ''
 
 jobs:
   buildClient:
@@ -29,32 +29,42 @@ jobs:
       run: npm i
         
     - name: Install Temporary Dependencies
-      run: npm install axios adm-zip
+      run: npm install axios adm-zip @actions/core @actions/github
 
-    - name: Download and Extract Artifact
+    - name: Download and Extract Incremental File
       run: node .github/workflows/download-artifact.js
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         OWNER: ${{ github.repository_owner }}
         REPO: ${{ github.event.repository.name }}
-        WORKFLOW_NAME: LetsLearnCI/CD
+        WORKFLOW_ID: 116600610
         ARTIFACT_NAME: stryker-incremental
 
     - name: Run Stryker
       run: |
         if [ -f /home/runner/work/lets-learn-angular/lets-learn-angular/.github/workflows/extracted_artifact/stryker-incremental.json ]; then
           echo "Artifact found, continuing Stryker incremental run."
-          npx stryker run --incremental --incrementalFile /home/runner/work/lets-learn-angular/lets-learn-angular/.github/workflows/extracted_artifact/stryker-incremental.json
+          if [ "$COMPONENT_COUNT" = 'complete' ]; then
+            echo "Component counting is complete, running Stryker incremental with all files."
+            npx stryker run --incremental --incrementalFile /home/runner/work/lets-learn-angular/lets-learn-angular/.github/workflows/extracted_artifact/stryker-incremental.json
+          else if [ "$COMPONENT_FILES" != '']; then
+            echo "Component count is $COMPONENT_COUNT, running Stryker incremental with $COMPONENT_FILES."
+            npx stryker run --incremental --incrementalFile /home/runner/work/lets-learn-angular/lets-learn-angular/.github/workflows/extracted_artifact/stryker-incremental.json --files "$COMPONENT_FILES"
+          else
+            echo "Component count is $COMPONENT_COUNT, but no component files were defined to stryke.  Unable to run Stryker incremental."
+          fi
           echo "INCREMENTAL_PATH=/home/runner/work/lets-learn-angular/lets-learn-angular/.github/workflows/extracted_artifact/stryker-incremental.json" >> $GITHUB_ENV
+        else if [ "$COMPONENT_FILES" = '']; then
+          echo "Artifact not found, and no component files were defined to stryke.  Unable to run Stryker incremental."
         else
-          echo "Artifact not found, initializing full Stryker run."
-          npx stryker run --incremental
+          echo "Artifact not found, running Stryker incremental with $COMPONENT_FILES."
+          npx stryker run --incremental --files "$COMPONENT_FILES" 
         fi
 
     - name: Upload Stryker Incremental Report
       uses: actions/upload-artifact@v4
       with:
-        name: stryker-incremental
+        name: stryker-incremental_${{ env.COMPONENT_COUNT }}
         path: ${{ env.INCREMENTAL_PATH }}
   
     - name: Upload Stryker Coverage Report
