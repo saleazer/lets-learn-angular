@@ -80,8 +80,7 @@ async function getComponentFiles() {
     }
     try {
         const { context } = github;
-        const token = core.getInput('GITHUB_TOKEN');
-        const octokit = github.getOctokit(token);
+        const octokit = github.getOctokit(GITHUB_TOKEN);
         
         const { data: files } = await octokit.rest.pulls.listFiles({
             owner: context.repo.owner,
