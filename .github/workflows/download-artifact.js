@@ -14,7 +14,7 @@ const ARTIFACT_NAME = process.env.ARTIFACT_NAME;
 let previousCount = 0;
 
 async function getLatestSuccessfulRun() {
-    console.log(`getLatestSuccessfulRun for ${WORKFLOW_ID}`);
+    console.log(`gettingLatestSuccessfulRun for ${WORKFLOW_ID}`);
     const url = `https://api.github.com/repos/${OWNER}/${REPO}/actions/workflows/${WORKFLOW_ID}/runs`;
     const response = await axios.get(url, {
         headers: { Authorization: `token ${GITHUB_TOKEN}` },
@@ -30,7 +30,7 @@ async function getLatestSuccessfulRun() {
 }
 
 async function getArtifactId(runId) {
-  console.log(`getArtifactId for run#: ${runId}`);
+  console.log(`gettingArtifactId for run#: ${runId}`);
   const url = `https://api.github.com/repos/${OWNER}/${REPO}/actions/runs/${runId}/artifacts`;
   const response = await axios.get(url, {
     headers: {
@@ -48,7 +48,7 @@ async function getArtifactId(runId) {
 }
 
 async function downloadArtifact(artifactId) {
-  console.log(`downloadArtifact: ${artifactId}`);
+  console.log(`downloadingArtifact: ${artifactId}`);
   const url = `https://api.github.com/repos/${OWNER}/${REPO}/actions/artifacts/${artifactId}/zip`;
   const response = await axios.get(url, {
     headers: {
@@ -60,16 +60,16 @@ async function downloadArtifact(artifactId) {
   console.log(`downloadArtifact Response status: ${response.status}`);
   const zipPath = path.join(__dirname, `${ARTIFACT_NAME}.zip`);
   fs.writeFileSync(zipPath, Buffer.from(response.data));
-  console.log(`zipped artifact path: ${zipPath}`);
+  // console.log(`zipped artifact path: ${zipPath}`);
   return zipPath;
 }
 
 function extractArtifact(zipPath) {
-    console.log(`extractArtifact from: ${zipPath}`);
+    console.log(`extractingArtifact from: ${zipPath}`);
   const zip = new AdmZip(zipPath);
   const extractPath = path.join(__dirname, 'extracted_artifact');
   zip.extractAllTo(extractPath, true);
-    console.log(`extracted artifact path: ${extractPath}`);
+    // console.log(`extracted artifact path: ${extractPath}`);
   return extractPath;
 }
 
@@ -103,12 +103,13 @@ async function getComponentFiles() {
           return files;
         }
       
-      const allFiles = await getAllFiles(octokit, context.repo.owner, context.repo.repo, 'src');
-      console.log(allFiles);
+        const allFiles = await getAllFiles(octokit, context.repo.owner, context.repo.repo, 'src');
 
         const filesWithTests = allFiles
-            .filter(filename => filename.endsWith('.spec.ts'))
+            .filter(filename => filename.endsWith('.spec.ts'))``
             .map(testFile => testFile.replace('.spec.ts', '.ts'));
+        
+        console.log(filesWithTests);
 
         const filesToStryke = filesWithTests.slice(0, previousCount+1);
   
