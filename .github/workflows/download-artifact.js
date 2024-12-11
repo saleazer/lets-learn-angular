@@ -104,10 +104,9 @@ async function getComponentFiles() {
         }
       
       const allFiles = await getAllFiles(octokit, context.repo.owner, context.repo.repo, 'src');
-      console.log(files);
+      console.log(allFiles);
 
         const filesWithTests = allFiles
-            .map(file => file.filename)
             .filter(filename => filename.endsWith('.spec.ts'))
             .map(testFile => testFile.replace('.spec.ts', '.ts'));
 
