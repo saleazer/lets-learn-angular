@@ -28,7 +28,7 @@ async function getLatestSuccessfulRun() {
 
 async function getArtifactId(runId) {
   if (!runId) {
-      console.log('Invalid runId provided, unable to get artifactId');
+      console.log(`Invalid runId provided (${runId}), unable to get artifactId`);
       return null;
     }
     console.log(`Valid runId provided, gettingArtifactId for run#: ${runId}`);
@@ -51,7 +51,7 @@ async function getArtifactId(runId) {
 
 async function downloadArtifact(artifactId) {
     if (!artifactId) {
-      console.log('Invalid artifactId provided, unable to download artifact');
+      console.log(`Invalid artifactId provided (${artifactId}), unable to download artifact`);
       return null;
     }
     console.log(`Valid artifactId provided, downloadingArtifact: ${artifactId}`);
@@ -72,7 +72,7 @@ async function downloadArtifact(artifactId) {
 
 function extractArtifact(zipPath) {
     if (!zipPath) {
-      console.log('Invalid zipPath provided, unable to extract artifact');
+      console.log(`Invalid zipPath provided (${zipPath}), unable to extract artifact`);
       return null;
     }
     console.log(`Valid zipPath provided, extractingArtifact from: ${zipPath}`);
