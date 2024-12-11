@@ -29,10 +29,12 @@ async function getAllFiles(octokit, owner, repo, path) {
     let prevCount = parseInt(process.env.COMPONENT_COUNT, 10);
     
     const allFiles = await getAllFiles(octokit, context.repo.owner, context.repo.repo, 'src/app');
+    console.log("All files: ", allFiles);
 
     const allFilesWithTests = allFiles
         .filter(filename => filename.endsWith('.spec.ts'))
-        .map(testFile => `src/app/**/${testFile.replace('.spec.ts', '.ts')}`);
+        .map(testFile => testFile.replace('.spec.ts', '.ts'));
+    console.log("All files with tests: ", allFilesWithTests);
 
     if (allFilesWithTests.length === 0) {
         console.log('No test files found');
@@ -50,3 +52,5 @@ async function getAllFiles(octokit, owner, repo, path) {
     core.setFailed(error.message);
   }
 })();
+
+//commenting a change to see what the next Stryker run does
