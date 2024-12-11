@@ -1,5 +1,6 @@
 const axios = require('axios');
 const AdmZip = require('adm-zip');
+const core = require('@actions/core');
 const fs = require('fs');
 const path = require('path');
 
@@ -8,8 +9,6 @@ const OWNER = process.env.OWNER;
 const REPO = process.env.REPO;
 const WORKFLOW_ID = process.env.WORKFLOW_ID;
 const ARTIFACT_NAME = process.env.ARTIFACT_NAME;
-
-let previousCount = 0;
 
 async function getLatestSuccessfulRun() {
     console.log(`gettingLatestSuccessfulRun for ${WORKFLOW_ID}`);
@@ -42,9 +41,10 @@ async function getArtifactId(runId) {
 
     console.log(`getArtifactId Response status: ${response.status}`);
     const artifact = response.data.artifacts.find(artifact => artifact.name.includes(ARTIFACT_NAME));
-    // if (artifact.name.includes('_')) {
-    //   previousCount = artifact.name.split('_')[1];
-    // }
+    if (artifact.name.includes('_')) {
+      let previousCount = artifact.name.split('_')[1];
+      core.exportVariable('COMPONENT_COUNT', previousCount);
+    }
     console.log(`artifactId = ${artifact.id}`);
     return artifact ? artifact.id : null;
 }
