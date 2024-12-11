@@ -60,7 +60,7 @@ jobs:
           echo "No incremental artifact round, running Stryker as initial incremental run."
           if [ "$COMPONENT_FILES" != '' ]; then
             echo "Running Stryker with $COMPONENT_FILES."
-            npx stryker run --incremental
+            npx stryker run --incremental --incrementalFile /home/runner/work/lets-learn-angular/lets-learn-angular/.github/workflows/extracted_artifact/stryker-incremental.json
           else
             echo "No component files were defined to stryke. Unable to run Stryker."
           fi
