@@ -67,11 +67,11 @@ jobs:
         fi
         echo "INCREMENTAL_PATH=/home/runner/work/lets-learn-angular/lets-learn-angular/.github/workflows/extracted_artifact/stryker-incremental.json" >> $GITHUB_ENV
 
-    - name: Upload Stryker Incremental Report
-      uses: actions/upload-artifact@v4
-      with:
-        name: stryker-incremental_${{ env.COMPONENT_COUNT }}
-        path: ${{ env.INCREMENTAL_PATH }}
+    # - name: Upload Stryker Incremental Report
+    #   uses: actions/upload-artifact@v4
+    #   with:
+    #     name: stryker-incremental_${{ env.COMPONENT_COUNT }}
+    #     path: ${{ env.INCREMENTAL_PATH }}
   
     - name: Upload Stryker Coverage Report
       uses: actions/upload-artifact@v4
