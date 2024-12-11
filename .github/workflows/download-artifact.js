@@ -118,15 +118,15 @@ async function getComponentFiles() {
             .map(testFile => testFile.replace('.spec.ts', '.ts'));
         console.log(allFilesWithTests);        
 
-        if (allFilesWithTests.length() === 0) {
+        if (allFilesWithTests.length === 0) {
             core.exportVariable('COMPONENT_FILES', '');
 
-        } else if (allFilesWithTests.length() > previousCount) {
+        } else if (allFilesWithTests.length > previousCount) {
             const filesToStryke = allFilesWithTests.slice(0, previousCount+1);
             core.exportVariable('COMPONENT_FILES', filesToStryke.join(', '));
             core.exportVariable('COMPONENT_COUNT', previousCount+1);
 
-        } else if (allFilesWithTests.length() === previousCount) {
+        } else if (allFilesWithTests.length === previousCount) {
             core.exportVariable('COMPONENT_FILES', allFilesWithTests.join(', '));
         }
   
