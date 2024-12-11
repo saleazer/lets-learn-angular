@@ -82,19 +82,38 @@ async function getComponentFiles() {
         const { context } = github;
         const octokit = github.getOctokit(GITHUB_TOKEN);
         
-        const { data: files } = await octokit.rest.pulls.listFiles({
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            pull_number: context.payload.pull_request.number
-        });
+        async function getAllFiles(octokit, owner, repo, path) {
+          const { data: items } = await octokit.rest.repos.getContent({
+              owner,
+              repo,
+              path
+          });
+      
+          let files = [];
+      
+          for (const item of items) {
+              if (item.type === 'file') {
+                  files.push(item.path);
+              } else if (item.type === 'dir') {
+                  const subFiles = await getAllFiles(octokit, owner, repo, item.path);
+                  files = files.concat(subFiles);
+              }
+          }
+      
+          return files;
+        }
+      
+      const allFiles = await getAllFiles(octokit, context.repo.owner, context.repo.repo, 'src');
+      console.log(files);
 
-        const componentFiles = files
+        const filesWithTests = allFiles
             .map(file => file.filename)
-            .filter(filename => filename.endsWith('.component.ts'));
+            .filter(filename => filename.endsWith('.spec.ts'))
+            .map(testFile => testFile.replace('.spec.ts', '.ts'));
 
-        const componentsToStryke = componentFiles.slice(0, previousCount+1);
+        const filesToStryke = filesWithTests.slice(0, previousCount+1);
   
-        if (componentFiles.length > 0 && componentFiles.length === componentsToStryke.length) {
+        if (filesToStryke.length > 0 && filesToStryke.length === filesToStryke.length) {
             core.exportVariable('COMPONENT_COUNT', 'complete');
         } else {
             core.exportVariable('COMPONENT_FILES', componentsToStryke.join(', '));
