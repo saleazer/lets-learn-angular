@@ -78,9 +78,17 @@ function extractArtifact(zipPath) {
     console.log(`Valid zipPath provided, extractingArtifact from: ${zipPath}`);
     const zip = new AdmZip(zipPath);
     const extractPath = path.join(__dirname, 'extracted_artifact');
+
     zip.extractAllTo(extractPath, true);
-    console.log(`extracted artifact path: ${extractPath}`);
-    return extractPath;
+    console.log(`extracted artifact to: ${extractPath}`);
+
+    const artifactFilePath = path.join(extractPath, 'stryker-incremental.json');
+
+    if (fs.existsSync(artifactFilePath)) {
+      console.log(`Artifact file found at: ${artifactFilePath}`);
+    } else {
+      console.log(`Artifact file ${artifactFilePath} not found`);
+    }
 }
 
 (async () => {
@@ -88,13 +96,7 @@ function extractArtifact(zipPath) {
         const runId = await getLatestSuccessfulRun();
         const artifactId = await getArtifactId(runId);
         const zipPath = await downloadArtifact(artifactId);
-        const extractPath = extractArtifact(zipPath);
-        const artifactFilePath = path.join(extractPath, 'stryker-incremental.json');
-        
-        if (!fs.existsSync(artifactFilePath)) {
-          console.log(`Artifact file ${artifactFilePath} not found`);
-        }
-        console.log(`Artifact file found at: ${artifactFilePath}`);
+        extractArtifact(zipPath);
 
     } catch (error) {
         console.error(`Error: ${error.message}`);
