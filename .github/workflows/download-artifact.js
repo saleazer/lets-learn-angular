@@ -31,6 +31,7 @@ async function getArtifactId(runId) {
       console.log(`Invalid runId provided (${runId}), unable to get artifactId`);
       return null;
     }
+
     console.log(`Valid runId provided, gettingArtifactId for run#: ${runId}`);
     const url = `https://api.github.com/repos/${OWNER}/${REPO}/actions/runs/${runId}/artifacts`;
     const response = await axios.get(url, {
@@ -41,12 +42,16 @@ async function getArtifactId(runId) {
 
     console.log(`getArtifactId Response status: ${response.status}`);
     const artifact = response.data.artifacts.find(artifact => artifact.name.includes(ARTIFACT_NAME));
-    if (artifact && artifact.name.includes('_')) {
-      let previousCount = artifact.name.split('_')[1];
-      core.exportVariable('COMPONENT_COUNT', previousCount);
-      console.log(`artifactId = ${artifact.id}`);
+
+    if (!artifact) {
+      console.log(`No artifact found for runId ${runId} with name: ${ARTIFACT_NAME}`);
+      return null;
     }
-    return artifact ? artifact.id : null;
+
+    let previousCount = artifact.name.split('_')[1];
+    core.exportVariable('COMPONENT_COUNT', previousCount);
+    console.log(`artifactId = ${artifact.id}`);
+    return artifact.id;
 }
 
 async function downloadArtifact(artifactId) {
@@ -85,7 +90,7 @@ function extractArtifact(zipPath) {
     const artifactFilePath = path.join(extractPath, 'stryker-incremental.json');
 
     if (fs.existsSync(artifactFilePath)) {
-      console.log(`Artifact file found at: ${artifactFilePath}`);
+      console.log(`Artifact file found at: ${artifactFilePath}!`);
     } else {
       console.log(`Artifact file ${artifactFilePath} not found`);
     }
