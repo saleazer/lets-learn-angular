@@ -27,12 +27,8 @@ async function getLatestSuccessfulRun() {
 }
 
 async function getArtifactId(runId) {
-  // if (true) {
-  //   console.log('NULL on purpose to negate artifact workflow');
-  //   return null;
-  // }
   if (!runId) {
-      console.log('NULL runId provided, unable to get artifactId');
+      console.log('Invalid runId provided, unable to get artifactId');
       return null;
     }
     console.log(`Valid runId provided, gettingArtifactId for run#: ${runId}`);
@@ -45,7 +41,7 @@ async function getArtifactId(runId) {
 
     console.log(`getArtifactId Response status: ${response.status}`);
     const artifact = response.data.artifacts.find(artifact => artifact.name.includes(ARTIFACT_NAME));
-    if (artifact.name.includes('_')) {
+    if (artifact && artifact.name.includes('_')) {
       let previousCount = artifact.name.split('_')[1];
       core.exportVariable('COMPONENT_COUNT', previousCount);
     }
@@ -55,7 +51,7 @@ async function getArtifactId(runId) {
 
 async function downloadArtifact(artifactId) {
     if (!artifactId) {
-      console.log('NULL artifactId provided, unable to download artifact');
+      console.log('Invalid artifactId provided, unable to download artifact');
       return null;
     }
     console.log(`Valid artifactId provided, downloadingArtifact: ${artifactId}`);
@@ -76,7 +72,7 @@ async function downloadArtifact(artifactId) {
 
 function extractArtifact(zipPath) {
     if (!zipPath) {
-      console.log('NULL zipPath provided, unable to extract artifact');
+      console.log('Invalid zipPath provided, unable to extract artifact');
       return null;
     }
     console.log(`Valid zipPath provided, extractingArtifact from: ${zipPath}`);
