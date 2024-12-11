@@ -116,7 +116,7 @@ async function getComponentFiles() {
         const allFilesWithTests = allFiles
             .filter(filename => filename.endsWith('.spec.ts'))
             .map(testFile => testFile.replace('.spec.ts', '.ts'));
-        console.log(filesWithTests);        
+        console.log(allFilesWithTests);        
 
         if (allFilesWithTests.length() === 0) {
             core.exportVariable('COMPONENT_FILES', '');
