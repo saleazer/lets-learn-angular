@@ -1,12 +1,7 @@
 // @ts-check
 /** @type {import('@stryker-mutator/api/core').PartialStrykerOptions} */
 const config = {
-  mutate: [
-    "src/**/*.component.ts",
-    "!src/**/*.spec.ts",
-    "!src/test.ts",
-    "!src/environments/*.ts",
-  ],
+  mutate: process.env.COMPONENT_FILES ? process.env.COMPONENT_FILES.split(', ') : [],
   testRunner: "karma",
   karma: {
     configFile: "karma.conf.js",

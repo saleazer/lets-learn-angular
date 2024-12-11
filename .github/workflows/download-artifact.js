@@ -2,8 +2,6 @@ const axios = require('axios');
 const AdmZip = require('adm-zip');
 const fs = require('fs');
 const path = require('path');
-const core = require('@actions/core');
-const github = require('@actions/github');
 
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 const OWNER = process.env.OWNER;
@@ -85,56 +83,6 @@ function extractArtifact(zipPath) {
     return extractPath;
 }
 
-async function getAllFiles(octokit, owner, repo, path) {
-    const { data: items } = await octokit.rest.repos.getContent({
-        owner,
-        repo,
-        path
-    });
-
-    let files = [];
-
-    for (const item of items) {
-        if (item.type === 'file') {
-            files.push(item.path);
-        } else if (item.type === 'dir') {
-            const subFiles = await getAllFiles(octokit, owner, repo, item.path);
-            files = files.concat(subFiles);
-        }
-    }
-
-    return files;
-}
-
-async function getComponentFiles() {
-    try {
-        const { context } = github;
-        const octokit = github.getOctokit(GITHUB_TOKEN);
-              
-        const allFiles = await getAllFiles(octokit, context.repo.owner, context.repo.repo, 'src');
-
-        const allFilesWithTests = allFiles
-            .filter(filename => filename.endsWith('.spec.ts'))
-            .map(testFile => testFile.replace('.spec.ts', '.ts'));
-        console.log(allFilesWithTests);        
-
-        if (allFilesWithTests.length === 0) {
-            core.exportVariable('COMPONENT_FILES', '');
-
-        } else if (allFilesWithTests.length > previousCount) {
-            const filesToStryke = allFilesWithTests.slice(0, previousCount+1);
-            core.exportVariable('COMPONENT_FILES', filesToStryke.join(', '));
-            core.exportVariable('COMPONENT_COUNT', previousCount+1);
-
-        } else if (allFilesWithTests.length === previousCount) {
-            core.exportVariable('COMPONENT_FILES', allFilesWithTests.join(', '));
-        }
-  
-    } catch (error) {
-        core.setFailed(error.message);
-    }
-  }
-
 (async () => {
     try {
         const runId = await getLatestSuccessfulRun();
@@ -147,8 +95,6 @@ async function getComponentFiles() {
           console.log(`Artifact file ${artifactFilePath} not found`);
         }
         console.log(`Artifact file found at: ${artifactFilePath}`);
-
-        getComponentFiles();
 
     } catch (error) {
         console.error(`Error: ${error.message}`);
