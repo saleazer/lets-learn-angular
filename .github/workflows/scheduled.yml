@@ -44,21 +44,13 @@ jobs:
       run: |
         if [ -f /home/runner/work/lets-learn-angular/lets-learn-angular/.github/workflows/extracted_artifact/stryker-incremental.json ]; then
           echo "Artifact found, continuing Stryker incremental run."
-          if [ "$COMPONENT_COUNT" = 'complete' ]; then
-            echo "Component counting is complete, running Stryker incremental with all files."
-            npx stryker run --incremental --incrementalFile /home/runner/work/lets-learn-angular/lets-learn-angular/.github/workflows/extracted_artifact/stryker-incremental.json
-          elif [ "$COMPONENT_FILES" != '' ]; then
-            echo "Component count is $COMPONENT_COUNT, running Stryker incremental with $COMPONENT_FILES."
+          if [ "$COMPONENT_FILES" != '' ]; then
+            echo "Running Stryker incremental with $COMPONENT_FILES."
             npx stryker run --incremental --incrementalFile /home/runner/work/lets-learn-angular/lets-learn-angular/.github/workflows/extracted_artifact/stryker-incremental.json --files "$COMPONENT_FILES"
           else
-            echo "Component count is $COMPONENT_COUNT, but no component files were defined to stryke. Unable to run Stryker incremental."
+            echo "No component files were defined to stryke. Unable to run Stryker incremental."
           fi
           echo "INCREMENTAL_PATH=/home/runner/work/lets-learn-angular/lets-learn-angular/.github/workflows/extracted_artifact/stryker-incremental.json" >> $GITHUB_ENV
-        elif [ "$COMPONENT_FILES" = '' ]; then
-          echo "Artifact not found, and no component files were defined to stryke. Unable to run Stryker incremental."
-        else
-          echo "Artifact not found, running Stryker incremental with $COMPONENT_FILES."
-          npx stryker run --incremental --files "$COMPONENT_FILES"
         fi
 
     - name: Upload Stryker Incremental Report
