@@ -39,7 +39,7 @@ async function getAllFiles(octokit, owner, repo, path) {
         core.exportVariable('COMPONENT_FILES', '');
         core.exportVariable('COMPONENT_COUNT', 0);
     } else if (allFilesWithTests.length > prevCount) {
-        const filesToStryke = allFilesWithTests.slice(0, previousCount+1);
+        const filesToStryke = allFilesWithTests.slice(0, prevCount+1);
         core.exportVariable('COMPONENT_FILES', filesToStryke.join(', '));
         core.exportVariable('COMPONENT_COUNT', prevCount+1);
     } else {
