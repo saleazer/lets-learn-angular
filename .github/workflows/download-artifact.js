@@ -44,8 +44,8 @@ async function getArtifactId(runId) {
     if (artifact && artifact.name.includes('_')) {
       let previousCount = artifact.name.split('_')[1];
       core.exportVariable('COMPONENT_COUNT', previousCount);
+      console.log(`artifactId = ${artifact.id}`);
     }
-    console.log(`artifactId = ${artifact.id}`);
     return artifact ? artifact.id : null;
 }
 
