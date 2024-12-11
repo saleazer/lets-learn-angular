@@ -100,3 +100,5 @@ function extractArtifact(zipPath) {
         console.error(`Error: ${error.message}`);
     }
 })();
+
+// Commenting a change to see what the next Stryker run does
