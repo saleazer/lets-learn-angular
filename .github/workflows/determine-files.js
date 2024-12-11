@@ -32,7 +32,7 @@ async function getAllFiles(octokit, owner, repo, path) {
 
     const allFilesWithTests = allFiles
         .filter(filename => filename.endsWith('.spec.ts'))
-        .map(testFile => testFile.replace('.spec.ts', '.ts'));
+        .map(testFile => `src/app/**/${testFile.replace('.spec.ts', '.ts')}`);
 
     if (allFilesWithTests.length === 0) {
         console.log('No test files found');
@@ -50,5 +50,3 @@ async function getAllFiles(octokit, owner, repo, path) {
     core.setFailed(error.message);
   }
 })();
-
-//commenting a change to see what the next Stryker run does

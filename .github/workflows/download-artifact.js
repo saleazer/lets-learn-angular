@@ -27,10 +27,10 @@ async function getLatestSuccessfulRun() {
 }
 
 async function getArtifactId(runId) {
-  if (true) {
-    console.log('NULL on purpose to negate artifact workflow');
-    return null;
-  }
+  // if (true) {
+  //   console.log('NULL on purpose to negate artifact workflow');
+  //   return null;
+  // }
   if (!runId) {
       console.log('NULL runId provided, unable to get artifactId');
       return null;
