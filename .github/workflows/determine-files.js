@@ -26,7 +26,7 @@ async function getAllFiles(octokit, owner, repo, path) {
   try {
     const { context } = github;
     const octokit = github.getOctokit(process.env.GITHUB_TOKEN);
-    let prevCount = parseInt(process.env.COMPONENT_COUNT, 10);
+    let prevCount = parseInt(process.env.FILESTOSTRYKE_COUNT, 10);
     
     const allFiles = await getAllFiles(octokit, context.repo.owner, context.repo.repo, 'src/app');
     console.log("All files: ", allFiles);
@@ -38,14 +38,14 @@ async function getAllFiles(octokit, owner, repo, path) {
 
     if (allFilesWithTests.length === 0) {
         console.log('No test files found');
-        core.exportVariable('COMPONENT_FILES', '');
-        core.exportVariable('COMPONENT_COUNT', 0);
+        core.exportVariable('FILESTOSTRYKE', '');
+        core.exportVariable('FILESTOSTRYKE_COUNT', 0);
     } else if (allFilesWithTests.length > prevCount) {
         const filesToStryke = allFilesWithTests.slice(0, prevCount+1);
-        core.exportVariable('COMPONENT_FILES', filesToStryke.join(', '));
-        core.exportVariable('COMPONENT_COUNT', prevCount+1);
+        core.exportVariable('FILESTOSTRYKE', filesToStryke.join(', '));
+        core.exportVariable('FILESTOSTRYKE_COUNT', prevCount+1);
     } else {
-        core.exportVariable('COMPONENT_FILES', allFilesWithTests.join(', '));
+        core.exportVariable('FILESTOSTRYKE', allFilesWithTests.join(', '));
     }
 
   } catch (error) {

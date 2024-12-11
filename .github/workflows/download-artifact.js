@@ -49,7 +49,7 @@ async function getArtifactId(runId) {
     }
 
     let previousCount = artifact.name.split('_')[1];
-    core.exportVariable('COMPONENT_COUNT', previousCount);
+    core.exportVariable('FILESTOSTRYKE_COUNT', previousCount);
     console.log(`artifactId = ${artifact.id}`);
     return artifact.id;
 }

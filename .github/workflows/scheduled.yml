@@ -7,8 +7,8 @@ on:
 env:
   NODE_VERSION: "20.9.0"
   INCREMENTAL_PATH: reports/stryker-incremental.json
-  COMPONENT_COUNT: 1
-  COMPONENT_FILES: ''
+  FILESTOSTRYKE_COUNT: 0
+  FILESTOSTRYKE: ''
 
 jobs:
   buildClient:
@@ -44,22 +44,22 @@ jobs:
       run: node .github/workflows/determine-files.js
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        COMPONENT_COUNT: ${{ env.COMPONENT_COUNT }}
+        FILESTOSTRYKE_COUNT: ${{ env.FILESTOSTRYKE_COUNT }}
 
     - name: Run Stryker
       run: |
         if [ -f /home/runner/work/lets-learn-angular/lets-learn-angular/.github/workflows/extracted_artifact/stryker-incremental.json ]; then
           echo "Incremental artifact found, continuing Stryker incremental run."
-          if [ "$COMPONENT_FILES" != '' ]; then
-            echo "Running Stryker incremental with $COMPONENT_FILES."
+          if [ "$FILESTOSTRYKE" != '' ]; then
+            echo "Running Stryker incremental with $FILESTOSTRYKE."
             npx stryker run --incremental --incrementalFile /home/runner/work/lets-learn-angular/lets-learn-angular/.github/workflows/extracted_artifact/stryker-incremental.json
           else
             echo "No component files were defined to stryke. Unable to run Stryker incremental."
           fi
         else
           echo "No incremental artifact round, running Stryker as initial incremental run."
-          if [ "$COMPONENT_FILES" != '' ]; then
-            echo "Running Stryker with $COMPONENT_FILES."
+          if [ "$FILESTOSTRYKE" != '' ]; then
+            echo "Running Stryker with $FILESTOSTRYKE."
             npx stryker run --incremental --incrementalFile /home/runner/work/lets-learn-angular/lets-learn-angular/.github/workflows/extracted_artifact/stryker-incremental.json
           else
             echo "No component files were defined to stryke. Unable to run Stryker."
@@ -70,7 +70,7 @@ jobs:
     # - name: Upload Stryker Incremental Report
     #   uses: actions/upload-artifact@v4
     #   with:
-    #     name: stryker-incremental_${{ env.COMPONENT_COUNT }}
+    #     name: stryker-incremental_${{ env.FILESTOSTRYKE_COUNT }}
     #     path: ${{ env.INCREMENTAL_PATH }}
   
     - name: Upload Stryker Coverage Report
