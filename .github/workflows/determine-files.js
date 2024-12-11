@@ -50,3 +50,5 @@ async function getAllFiles(octokit, owner, repo, path) {
     core.setFailed(error.message);
   }
 })();
+
+//commenting a change to see what the next Stryker run does
