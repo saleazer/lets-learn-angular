@@ -20,53 +20,87 @@ async function getWorkflowId() {
   return workflow ? workflow.id : null;
 }
 
-async function getLatestSuccessfulRun(workflowId) {
+// async function getLatestSuccessfulRun(workflowId) {
+//     if (!workflowId) {
+//         console.log(`Invalid workflowId provided (${workflowId}), unable to get latest successful runId`);
+//         return null;
+//     }
+//     console.log(`gettingLatestSuccessfulRun for ${workflowId}`);
+//     const url = `https://api.github.com/repos/${OWNER}/${REPO}/actions/workflows/${workflowId}/runs`;
+//     const response = await axios.get(url, {
+//         headers: { Authorization: `token ${GITHUB_TOKEN}` },
+//         params: {
+//             status: 'success',
+//             per_page: 1
+//         }
+//     });
+//     console.log(`getLatestSuccessfulRun Response status: ${response.status}`);
+//     const run = response.data.workflow_runs[0];
+//     console.log(`latestSuccessfulRunId = ${run.id}`);
+//     return run ? run.id : null;
+// }
+
+async function findLatestIncrementalArtifactId(workflowId) {
     if (!workflowId) {
-        console.log(`Invalid workflowId provided (${workflowId}), unable to get latest successful runId`);
+        console.log(`Invalid workflowId provided (${workflowId}), unable to find latest incremental artifact`);
         return null;
     }
-    console.log(`gettingLatestSuccessfulRun for ${workflowId}`);
-    const url = `https://api.github.com/repos/${OWNER}/${REPO}/actions/workflows/${workflowId}/runs`;
-    const response = await axios.get(url, {
+
+    console.log(`gettingWorkflowRuns for ${workflowId}`);
+    const workflowRunsUrl = `https://api.github.com/repos/${OWNER}/${REPO}/actions/workflows/${workflowId}/runs`;
+    const response = await axios.get(workflowRunsUrl, {
         headers: { Authorization: `token ${GITHUB_TOKEN}` },
         params: {
-            status: 'success',
-            per_page: 1
+            status: 'success'
         }
     });
-    console.log(`getLatestSuccessfulRun Response status: ${response.status}`);
-    const run = response.data.workflow_runs[0];
-    console.log(`latestSuccessfulRunId = ${run.id}`);
-    return run ? run.id : null;
-}
+    console.log(`gettingWorkflowRuns Response status: ${response.status}`);
+    const runs = response.data.workflow_runs;
 
-async function getArtifactId(runId) {
-  if (!runId) {
-      console.log(`Invalid runId provided (${runId}), unable to get artifactId`);
-      return null;
-    }
+    for (let i = 0; i < runs.length; i++) { 
+        const runId = runs[i].id;
+        console.log(`gettingArtifacts for run #${i}, runId: ${runId}`);
+        const artifactsUrl = `https://api.github.com/repos/${OWNER}/${REPO}/actions/runs/${runId}/artifacts`;
+        const response = await axios.get(artifactsUrl, { headers: { Authorization: `token ${GITHUB_TOKEN}` } });
+        console.log(`getArtifacts Response status: ${response.status}`);
 
-    console.log(`Valid runId provided, gettingArtifactId for run#: ${runId}`);
-    const url = `https://api.github.com/repos/${OWNER}/${REPO}/actions/runs/${runId}/artifacts`;
-    const response = await axios.get(url, {
-        headers: {
-          Authorization: `token ${GITHUB_TOKEN}`
+        const artifact = response.data.artifacts.find(artifact => artifact.name.includes(ARTIFACT_NAME));
+        if (artifact) {
+          let previousCount = artifact.name.split('_')[1];
+          core.exportVariable('FILESTOSTRYKE_COUNT', previousCount);
+          console.log(`artifactId = ${artifact.id}`);
+          return artifact.id;
         }
-    });
-
-    console.log(`getArtifactId Response status: ${response.status}`);
-    const artifact = response.data.artifacts.find(artifact => artifact.name.includes(ARTIFACT_NAME));
-
-    if (!artifact) {
-      console.log(`No artifact found for runId ${runId} with name: ${ARTIFACT_NAME}`);
-      return null;
     }
-
-    let previousCount = artifact.name.split('_')[1];
-    core.exportVariable('FILESTOSTRYKE_COUNT', previousCount);
-    console.log(`artifactId = ${artifact.id}`);
-    return artifact.id;
 }
+
+// async function getArtifactId(runId) {
+//   if (!runId) {
+//       console.log(`Invalid runId provided (${runId}), unable to get artifactId`);
+//       return null;
+//     }
+
+//     console.log(`Valid runId provided, gettingArtifactId for run#: ${runId}`);
+//     const url = `https://api.github.com/repos/${OWNER}/${REPO}/actions/runs/${runId}/artifacts`;
+//     const response = await axios.get(url, {
+//         headers: {
+//           Authorization: `token ${GITHUB_TOKEN}`
+//         }
+//     });
+
+//     console.log(`getArtifactId Response status: ${response.status}`);
+//     const artifact = response.data.artifacts.find(artifact => artifact.name.includes(ARTIFACT_NAME));
+
+//     if (!artifact) {
+//       console.log(`No artifact found for runId ${runId} with name: ${ARTIFACT_NAME}`);
+//       return null;
+//     }
+
+//     let previousCount = artifact.name.split('_')[1];
+//     core.exportVariable('FILESTOSTRYKE_COUNT', previousCount);
+//     console.log(`artifactId = ${artifact.id}`);
+//     return artifact.id;
+// }
 
 async function downloadArtifact(artifactId) {
     if (!artifactId) {
@@ -113,8 +147,7 @@ function extractArtifact(zipPath) {
 (async () => {
     try {
         const workflowId = await getWorkflowId();
-        const runId = await getLatestSuccessfulRun(workflowId);
-        const artifactId = await getArtifactId(runId);
+        const artifactId = await findLatestIncrementalArtifactId(workflowId);
         const zipPath = await downloadArtifact(artifactId);
         extractArtifact(zipPath);
 
