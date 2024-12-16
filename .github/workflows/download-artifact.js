@@ -7,12 +7,26 @@ const path = require('path');
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 const OWNER = process.env.OWNER;
 const REPO = process.env.REPO;
-const WORKFLOW_ID = process.env.WORKFLOW_ID;
 const ARTIFACT_NAME = process.env.ARTIFACT_NAME;
 
-async function getLatestSuccessfulRun() {
-    console.log(`gettingLatestSuccessfulRun for ${WORKFLOW_ID}`);
-    const url = `https://api.github.com/repos/${OWNER}/${REPO}/actions/workflows/${WORKFLOW_ID}/runs`;
+async function getWorkflowId() {
+  console.log("getting WorkflowId");
+  const url = `https://api.github.com/repos/${OWNER}/${REPO}/actions/workflows`;
+  const response = await axios.get(url, {
+    headers: { Authorization: `token ${GITHUB_TOKEN}` }
+  });
+  console.log(`getWorkflowId Response status: ${response.status}`);
+  const workflow = response.data.workflows.find(workflow => workflow.name === process.env.GITHUB_WORKFLOW);
+  return workflow ? workflow.id : null;
+}
+
+async function getLatestSuccessfulRun(workflowId) {
+    if (!workflowId) {
+        console.log(`Invalid workflowId provided (${workflowId}), unable to get latest successful runId`);
+        return null;
+    }
+    console.log(`gettingLatestSuccessfulRun for ${workflowId}`);
+    const url = `https://api.github.com/repos/${OWNER}/${REPO}/actions/workflows/${workflowId}/runs`;
     const response = await axios.get(url, {
         headers: { Authorization: `token ${GITHUB_TOKEN}` },
         params: {
@@ -98,7 +112,8 @@ function extractArtifact(zipPath) {
 
 (async () => {
     try {
-        const runId = await getLatestSuccessfulRun();
+        const workflowId = await getWorkflowId();
+        const runId = await getLatestSuccessfulRun(workflowId);
         const artifactId = await getArtifactId(runId);
         const zipPath = await downloadArtifact(artifactId);
         extractArtifact(zipPath);
