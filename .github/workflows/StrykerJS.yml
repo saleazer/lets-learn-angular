@@ -50,7 +50,7 @@ jobs:
         if [ -f /home/runner/work/lets-learn-angular/lets-learn-angular/.github/workflows/extracted_artifact/stryker-incremental.json ]; then
           echo "Incremental artifact found, continuing Stryker incremental run."
           if [ "$FILESTOSTRYKE" != '' ]; then
-            echo "Running Stryker incremental with $FILESTOSTRYKE."
+            echo "Running Stryker incremental with:" && echo "$FILESTOSTRYKE" | tr ' ' '\n'
             npx stryker run --incremental --incrementalFile /home/runner/work/lets-learn-angular/lets-learn-angular/.github/workflows/extracted_artifact/stryker-incremental.json
           else
             echo "No component files were defined to stryke. Unable to run Stryker incremental."
