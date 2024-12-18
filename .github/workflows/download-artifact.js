@@ -3,6 +3,7 @@ const AdmZip = require('adm-zip');
 const core = require('@actions/core');
 const fs = require('fs');
 const path = require('path');
+const { context } = require('@actions/github');
 
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 const OWNER = `${context.repo.owner}`;
