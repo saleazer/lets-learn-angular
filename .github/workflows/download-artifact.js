@@ -5,8 +5,8 @@ const fs = require('fs');
 const path = require('path');
 
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
-const OWNER = context.repo.owner;
-const REPO = context.repo.repo;
+const OWNER = `${context.repo.owner}`;
+const REPO = `${context.repo.repo}`;
 const ARTIFACT_NAME = process.env.ARTIFACT_NAME;
 
 async function getWorkflowId() {
