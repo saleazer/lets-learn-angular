@@ -35,8 +35,6 @@ jobs:
       run: node .github/workflows/download-artifact.js
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        OWNER: ${{ github.repository_owner }}
-        REPO: ${{ github.event.repository.name }}
         ARTIFACT_NAME: stryker-incremental
 
     - name: Determine Files to Stryke
