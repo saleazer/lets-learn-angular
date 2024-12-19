@@ -11,6 +11,7 @@ import { AngularResourcesComponent } from './angular-resources/angular-resources
 import { ReactiveFormComponent } from './reactive-form/reactive-form.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { StoreModule } from '@ngrx/store';
+import { AppTestingComponent } from './app-testing/app-testing.component';
 
 @NgModule({
   declarations: [
@@ -19,7 +20,8 @@ import { StoreModule } from '@ngrx/store';
     AppFooterComponent,
     AppHomeComponent,
     AngularResourcesComponent,
-    ReactiveFormComponent
+    ReactiveFormComponent,
+    AppTestingComponent
   ],
   imports: [
     BrowserModule,
