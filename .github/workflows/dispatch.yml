@@ -33,6 +33,7 @@ jobs:
 
     - name: Install dependencies
       run: npm ci --prefer-offline
-      
+
     - name: Run tests
       run: npm test -- --no-watch --no-progress --browsers=ChromeHeadlessCI
+
