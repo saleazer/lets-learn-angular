@@ -1,0 +1,38 @@
+name: WorkflowDispatch
+
+on:
+  workflow_dispatch:
+
+env:
+  ENVIRONMENT_PATH: src/assets/environment.json
+  DIST_PATH: dist
+  NODE_VERSION: "20.9.0"
+
+jobs:
+  buildClient:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 1
+
+    - name: Setup Node
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+
+    - name: Cache node modules
+      uses: actions/cache@v4
+      with:
+        path: node_modules
+        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-
+
+    - name: Install dependencies
+      run: npm ci --prefer-offline
+      
+    - name: npm run tests
+      run: npm run test
