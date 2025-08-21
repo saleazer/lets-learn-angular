@@ -12,4 +12,15 @@ export class AppHomeComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  timesTwo(entry: number): number {
+    return entry * 2;
+  }
+
+  timesFour(entry: number): number {
+    return entry * 4;
+  }
+
+  timesEight(entry: number): number {
+    return entry * 8;
+  }
 }
