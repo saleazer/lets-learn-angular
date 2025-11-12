@@ -30,6 +30,4 @@ Shoutout to SheCodesOKC for the oppurtunity to learn how to create pull request 
 
 Thank you saleazer for letting us learn how source control works via this repository!  ~Spacekat
 
-Adding a line to the readme to test PR Webhook - 03/10/25
-
-PR for Webhook testing 03/27/25
+Changing some lines for a webhook PR event trigger 11/12/25
